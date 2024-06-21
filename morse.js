@@ -2,10 +2,6 @@ $(document).ready(function () {
     const colorDisplay = document.getElementById("color-display");
     const morseCodeDisplay = document.getElementById("morseCodeDisplay");
   
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const name = urlParams.get('name') ? urlParams.get('name').toUpperCase() : '';
-  
     const morseCode = {
       A: '.-', B: '-...', C: '-.-.', D: '-..', E: '.', F: '..-.', G: '--.',
       H: '....', I: '..', J: '.---', K: '-.-', L: '.-..', M: '--', N: '-.',
@@ -13,7 +9,7 @@ $(document).ready(function () {
       U: '..-', V: '...-', W: '.--', X: '-..-', Y: '-.--', Z: '--..'
     };
   
-    let totalDuration = 0; 
+    let totalDuration = 0;
   
     function addTiming(duration, callback) {
       totalDuration += duration;
@@ -21,8 +17,8 @@ $(document).ready(function () {
     }
   
     function displayMorseCode(name) {
-      morseCodeDisplay.innerHTML = ''; 
-      totalDuration = 0; 
+      morseCodeDisplay.innerHTML = '';
+      totalDuration = 0;
   
       for (let i = 0; i < name.length; i++) {
         const letter = name[i];
@@ -30,7 +26,7 @@ $(document).ready(function () {
         if (letter === ' ') {
           morseCodeDisplay.innerHTML += ' / ';
           addTiming(5000, () => {
-            colorDisplay.style.backgroundColor = 'gray'; 
+            colorDisplay.style.backgroundColor = 'gray';
           });
         } else if (morseCode.hasOwnProperty(letter)) {
           const code = morseCode[letter];
@@ -41,29 +37,46 @@ $(document).ready(function () {
   
             if (symbol === '.') {
               addTiming(0, () => {
-                console.log('h');
+                console.log("dot w");
                 colorDisplay.style.backgroundColor = 'white';
+              });
+              addTiming(200, () => {  
+                console.log("dot b");
+                colorDisplay.style.backgroundColor = 'black';
               });
             } else if (symbol === '-') {
               addTiming(0, () => {
-                console.log('i');
+                console.log("dash w");
+                colorDisplay.style.backgroundColor = 'white';
+              });
+              addTiming(200, () => { 
+                console.log("dash b");
+                colorDisplay.style.backgroundColor = 'black';
+              });
+              addTiming(1000, () => {  
                 colorDisplay.style.backgroundColor = 'black';
               });
             }
-            addTiming(1000, () => {
-              colorDisplay.style.backgroundColor = 'gray';
+            addTiming(200, () => {  
+              colorDisplay.style.backgroundColor = 'black';
             });
           }
   
           morseCodeDisplay.innerHTML += ' ';
-          addTiming(500, () => {
-            colorDisplay.style.backgroundColor = 'gray';
+          addTiming(0, () => {  
+            colorDisplay.style.backgroundColor = 'white';
+          });
+          addTiming(200, () => {  
+            colorDisplay.style.backgroundColor = 'black';
+          });
+          addTiming(2000, () => {  
+            colorDisplay.style.backgroundColor = 'black';
           });
         }
       }
   
-      addTiming(1000, () => {
-        colorDisplay.style.backgroundColor = 'gray';
+      addTiming(3000, () => {
+        colorDisplay.style.backgroundColor = 'white';
       });
     }
   
@@ -71,9 +84,5 @@ $(document).ready(function () {
       const name = document.getElementById("nameInput").value.toUpperCase();
       displayMorseCode(name);
     });
-  
-    if (name) {
-      displayMorseCode(name);
-    }
   });
   

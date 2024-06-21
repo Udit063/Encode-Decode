@@ -3,11 +3,15 @@ $(document).ready(function () {
   const colorDisplay = document.getElementById("color-display");
   const colorDurations = document.getElementById("color-durations");
   const blackDurations = document.getElementById("black-durations");
+  const morseDisplay = document.getElementById("morse-display");
+  const resultDisplay = document.getElementById("result-display");
   let currentColor = null;
   let colorStartTime = null;
   const durationArrays = [];
   let lightDurations = [];
   let blackDurationsArray = [];
+  let morseString = "";
+  let resultString = "";
 
   const morseCode = {
     A: '.-', B: '-...', C: '-.-.', D: '-..', E: '.', F: '..-.', G: '--.',
@@ -79,10 +83,22 @@ $(document).ready(function () {
       if (currentColor !== null) {
         const duration = now - colorStartTime;
 
-        if (currentColor) {
+        if (currentColor) { 
           durationArrays.push({ symbol: '-', duration });
           blackDurationsArray.push({ color: "Black", duration: duration });
-        } else {
+          if (duration < 300) {
+            morseString += ".";
+          } else if (duration <= 1310) {
+            morseString += "-";
+          } else if (duration > 1310 && duration <= 2100) {
+            interpretMorse(morseString);
+            morseString = "";
+          } else if (duration >= 2100) {
+            morseString += " ";
+            interpretMorse(morseString);
+            morseString = "";
+          }
+        } else { // Was light
           durationArrays.push({ symbol: '.', duration });
           lightDurations.push({ color: "Light", duration: duration });
         }
@@ -94,6 +110,21 @@ $(document).ready(function () {
       colorStartTime = now;
     }
   }
+
+  function interpretMorse(morseString) {
+    const morseWords = morseString.trim().split("   "); // Split by three spaces for words
+    const translatedWords = morseWords.map(word => {
+      const morseLetters = word.split(" "); // Split by single space for letters
+      return morseLetters.map(letter => {
+        return Object.keys(morseCode).find(key => morseCode[key] === letter) || "";
+      }).join("");
+    }).join(" ");
+    resultString += translatedWords + " ";
+    resultDisplay.textContent = resultString.trim();
+    console.log(`Morse Code: ${morseString}`);
+    console.log(`Translated Text: ${resultString.trim()}`);
+  }
+  
 
   function startVideoStream() {
     navigator.mediaDevices
