@@ -1,15 +1,13 @@
 $(document).ready(function () {
   const video = document.getElementById("video");
-  const colorDisplay = document.getElementById("color-display");
   const colorDurations = document.getElementById("color-durations");
   const blackDurations = document.getElementById("black-durations");
-  const morseDisplay = document.getElementById("morse-display");
   const resultDisplay = document.getElementById("result-display");
+  const rahulImage = document.getElementById("rahul-image");
+  const uditImage = document.getElementById("udit-image");
   let currentColor = null;
   let colorStartTime = null;
   const durationArrays = [];
-  let lightDurations = [];
-  let blackDurationsArray = [];
   let morseString = "";
   let resultString = "";
 
@@ -40,17 +38,10 @@ $(document).ready(function () {
   function logColorDuration(isBlack, duration) {
     const formattedDuration = formatDuration(duration);
 
-    if (isBlack) {
-      const colorDurationElement = document.createElement("div");
-      colorDurationElement.classList.add("color-duration");
-      colorDurationElement.textContent = `Black - ${formattedDuration}`;
-      blackDurations.appendChild(colorDurationElement);
-    } else {
-      const colorDurationElement = document.createElement("div");
-      colorDurationElement.classList.add("color-duration");
-      colorDurationElement.textContent = `Light - ${formattedDuration}`;
-      colorDurations.appendChild(colorDurationElement);
-    }
+    const colorDurationElement = document.createElement("div");
+    colorDurationElement.classList.add("color-duration");
+    colorDurationElement.textContent = `${isBlack ? 'Black' : 'Light'} - ${formattedDuration}`;
+    (isBlack ? blackDurations : colorDurations).appendChild(colorDurationElement);
   }
 
   function formatDuration(duration) {
@@ -85,7 +76,6 @@ $(document).ready(function () {
 
         if (currentColor) { 
           durationArrays.push({ symbol: '-', duration });
-          blackDurationsArray.push({ color: "Black", duration: duration });
           if (duration < 300) {
             morseString += ".";
           } else if (duration <= 1311) {
@@ -98,9 +88,6 @@ $(document).ready(function () {
             interpretMorse(morseString);
             morseString = "";
           }
-        } else { // Was light
-          durationArrays.push({ symbol: '.', duration });
-          lightDurations.push({ color: "Light", duration: duration });
         }
 
         logColorDuration(currentColor, duration);
@@ -119,12 +106,27 @@ $(document).ready(function () {
         return Object.keys(morseCode).find(key => morseCode[key] === letter) || "";
       }).join("");
     }).join(" ");
-    resultString += translatedWords + " ";
-    resultDisplay.textContent = resultString.trim();
+    resultString += translatedWords.trim();
+    const trimmedResult = resultString.trim();
+    resultDisplay.textContent = trimmedResult;
+
     console.log(`Morse Code: ${morseString}`);
-    console.log(`Translated Text: ${resultString.trim()}`);
+    console.log(`Translated Text: ${trimmedResult}`);
+
+    if (trimmedResult.toLowerCase().includes("rahul")) {
+      console.log("Displaying Rahul's image");
+      rahulImage.classList.remove("hidden");
+      uditImage.classList.add("hidden");
+    } else if (trimmedResult.toLowerCase().includes("udit")) {
+      console.log("Displaying Udit's image");
+      uditImage.classList.remove("hidden");
+      rahulImage.classList.add("hidden");
+    } else {
+      console.log("Hiding both images");
+      rahulImage.classList.add("hidden");
+      uditImage.classList.add("hidden");
+    }
   }
-  
 
   function startVideoStream() {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);

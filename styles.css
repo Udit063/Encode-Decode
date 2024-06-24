@@ -27,3 +27,7 @@ h1, h2 {
   margin-top: 10px;
   font-family: monospace;
 }
+
+.hidden {
+  display: none;
+}
