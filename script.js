@@ -127,6 +127,12 @@ $(document).ready(function () {
   
 
   function startVideoStream() {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const constraints = {
+      video: {
+        facingMode: isMobile ? { exact: "environment" } : "user"
+      }
+    };
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then(function (stream) {
