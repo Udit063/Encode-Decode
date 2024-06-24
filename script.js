@@ -88,9 +88,9 @@ $(document).ready(function () {
           blackDurationsArray.push({ color: "Black", duration: duration });
           if (duration < 300) {
             morseString += ".";
-          } else if (duration <= 1310) {
+          } else if (duration <= 1311) {
             morseString += "-";
-          } else if (duration > 1310 && duration <= 2100) {
+          } else if (duration > 1311 && duration <= 2100) {
             interpretMorse(morseString);
             morseString = "";
           } else if (duration >= 2100) {
@@ -128,13 +128,29 @@ $(document).ready(function () {
 
   function startVideoStream() {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const constraints = {
-      video: {
-        facingMode: isMobile ? { exact: "environment" } : "user"
-      }
-    };
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
+
+    navigator.mediaDevices.enumerateDevices()
+      .then(function (devices) {
+        let videoSourceId = null;
+        devices.forEach(function (device) {
+          if (device.kind === 'videoinput') {
+            if (isMobile && device.label.toLowerCase().includes('back')) {
+              videoSourceId = device.deviceId;
+            } else if (!isMobile && device.label.toLowerCase().includes('front')) {
+              videoSourceId = device.deviceId;
+            }
+          }
+        });
+
+        const constraints = {
+          video: {
+            deviceId: videoSourceId ? { exact: videoSourceId } : undefined,
+            facingMode: isMobile ? { exact: "environment" } : "user"
+          }
+        };
+
+        return navigator.mediaDevices.getUserMedia(constraints);
+      })
       .then(function (stream) {
         video.srcObject = stream;
         video.play();
