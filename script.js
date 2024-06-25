@@ -38,19 +38,15 @@ $(document).ready(function () {
     return { r, g, b };
   }
 
-  // Function to format duration into readable string
-  function formatDuration(duration) {
-    const milliseconds = Math.floor(duration % 1000);
-    const seconds = Math.floor((duration / 1000) % 60);
-    const minutes = Math.floor((duration / (1000 * 60)) % 60);
-    const hours = Math.floor(duration / (1000 * 60 * 60));
-
-    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.${milliseconds.toString().padStart(3, "0")}`;
+  // Function to calculate brightness from RGB values
+  function calculateBrightness(rgb) {
+    return 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
   }
 
-  // Function to determine if the average RGB represents a "black" color
+  // Function to determine if the brightness level represents a "black" color
   function isBlack(rgb) {
-    return rgb.r < 50 && rgb.g < 50 && rgb.b < 50;
+    const brightness = calculateBrightness(rgb);
+    return brightness < 50; // Adjust this threshold value as needed
   }
 
   // Function to capture color changes from the video stream
@@ -71,7 +67,7 @@ $(document).ready(function () {
       if (currentColor !== null) {
         const duration = now - colorStartTime;
 
-        if (currentColor) { 
+        if (currentColor) {
           durationArrays.push({ symbol: '-', duration });
           if (duration < 300) {
             morseString += ".";
@@ -94,8 +90,8 @@ $(document).ready(function () {
   }
 
   // Function to interpret Morse code string and display result
-function interpretMorse(morseString) {
-  const morseWords = morseString.trim().split("   "); // Split by three spaces for words
+  function interpretMorse(morseString) {
+    const morseWords = morseString.trim().split("   "); // Split by three spaces for words
     const translatedWords = morseWords.map(word => {
       const morseLetters = word.split(" "); // Split by single space for letters
       return morseLetters.map(letter => {
@@ -103,29 +99,28 @@ function interpretMorse(morseString) {
       }).join("");
     }).join(" ");
 
-  resultString += translatedWords.trim(); // Append translated words to resultString
-  resultDisplay.textContent = resultString;
+    resultString += translatedWords.trim(); // Append translated words to resultString
+    resultDisplay.textContent = resultString;
 
-  console.log(`Morse Code: ${morseString}`);
-  console.log(`Translated Text: ${resultString}`);
+    console.log(`Morse Code: ${morseString}`);
+    console.log(`Translated Text: ${resultString}`);
 
-  // Displaying or hiding images based on the translated result
-  const trimmedResult = resultString.toLowerCase();
-  if (trimmedResult.includes("rahul")) {
-    console.log("Displaying Rahul's image");
-    rahulImage.classList.remove("hidden");
-    uditImage.classList.add("hidden");
-  } else if (trimmedResult.includes("udit")) {
-    console.log("Displaying Udit's image");
-    uditImage.classList.remove("hidden");
-    rahulImage.classList.add("hidden");
-  } else {
-    console.log("Hiding both images");
-    rahulImage.classList.add("hidden");
-    uditImage.classList.add("hidden");
+    // Displaying or hiding images based on the translated result
+    const trimmedResult = resultString.toLowerCase();
+    if (trimmedResult.includes("rahul")) {
+      console.log("Displaying Rahul's image");
+      rahulImage.classList.remove("hidden");
+      uditImage.classList.add("hidden");
+    } else if (trimmedResult.includes("udit")) {
+      console.log("Displaying Udit's image");
+      uditImage.classList.remove("hidden");
+      rahulImage.classList.add("hidden");
+    } else {
+      console.log("Hiding both images");
+      rahulImage.classList.add("hidden");
+      uditImage.classList.add("hidden");
+    }
   }
-}
-
 
   // Function to start the video stream and capture color changes
   function startVideoStream() {
