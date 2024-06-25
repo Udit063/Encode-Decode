@@ -46,7 +46,7 @@ $(document).ready(function () {
   // Function to determine if the brightness level represents a "black" color
   function isBlack(rgb) {
     const brightness = calculateBrightness(rgb);
-    return brightness < 50; // Adjust this threshold value as needed
+    return brightness < 128; // Adjust this threshold value as needed
   }
 
   // Function to capture color changes from the video stream
